@@ -10,7 +10,7 @@ class RootPage extends StatelessWidget {
     return StreamBuilder<FirebaseUser>(
       builder: (BuildContext context, AsyncSnapshot snapshot){
 
-        if(snapshot.hasData){
+        if (snapshot.hasData) {
           return TabPage(snapshot.data);
         }else{
           return LoginPage();

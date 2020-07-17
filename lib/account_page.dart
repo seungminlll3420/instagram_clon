@@ -1,11 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class AccountPage extends StatefulWidget {
+  final FirebaseUser user;
+  AccountPage(this.user);
   @override
   _AccountPageState createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
+  int _postCount = 0;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Firestore.instance.collection('post').where('email', isEqualTo: widget.user.email)
+    .getDocuments()
+    .then((snapShot){
+      setState(() {
+        _postCount = snapShot.documents.length;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +54,7 @@ class _AccountPageState extends State<AccountPage> {
                     width: 80,
                     height: 80,
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSMlHzLpZO5BmjfvHtLulq4XshtUO-Sp8uwOg&usqp=CAU'),
+                      backgroundImage: NetworkImage(widget.user.photoUrl), // 여기선 widget.으로 접근한다. 그 이유는 위 user를 가져온 곳이 StatelessWidget 클래스라서.
                     ),
                   ),
                   Container(
@@ -69,12 +86,12 @@ class _AccountPageState extends State<AccountPage> {
                 ],
               ),
               Padding(padding: EdgeInsets.all(5.0)),
-              Text('MOOMIN',
+              Text(widget.user.displayName,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0 ),
               )
             ],
           ),
-          Text('0\n게시물',
+          Text('$_postCount\n게시물',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 15)
           ),

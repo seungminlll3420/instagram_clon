@@ -24,24 +24,23 @@ class LoginPage extends StatelessWidget {
             SignInButton(
               Buttons.Google,
               onPressed: () {
-              _handleSugnIn().then((user){
+              _handleSignIn().then((user){
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => TabPage(user)));
               });
             },
             ),
-            Padding(padding: EdgeInsets.all(50)),
+
           ],
         ),
       )
     );
   }
-  Future<FirebaseUser> _handleSugnIn() async{
-    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+  Future<FirebaseUser> _handleSignIn() async{  //로그인은 비동기
+    GoogleSignInAccount googleUser = await _googleSignIn.signIn();  //
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    FirebaseUser user = await _auth.signInWithCredential(
-      GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken)
-    );
+    FirebaseUser user = (await _auth.signInWithCredential(
+      GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken))).user;
     return user;
   }
 }
